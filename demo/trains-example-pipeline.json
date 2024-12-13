@@ -1,0 +1,458 @@
+{
+    "artifact": {
+        "name": "cdap-data-pipeline",
+        "version": "6.10.2",
+        "scope": "SYSTEM"
+    },
+    "description": "",
+    "name": "TrainsPipeline1_Tests",
+    "change": {
+        "description": ""
+    },
+    "parentVersion": "",
+    "config": {
+        "resources": {
+            "memoryMB": 2048,
+            "virtualCores": 1
+        },
+        "driverResources": {
+            "memoryMB": 2048,
+            "virtualCores": 1
+        },
+        "connections": [
+            {
+                "from": "Trains Data (Source)",
+                "to": "Ensure Columns"
+            },
+            {
+                "from": "Ensure Columns",
+                "to": "Projection"
+            },
+            {
+                "from": "Projection",
+                "to": "Fixture (Test)"
+            },
+            {
+                "from": "Fixture (Test)",
+                "to": "Ensure Basic Validity"
+            },
+            {
+                "from": "Ensure Basic Validity",
+                "to": "Wrangler"
+            },
+            {
+                "from": "Wrangler",
+                "to": "Ensure Validity"
+            },
+            {
+                "from": "Wrangler",
+                "to": "ErrorCollector"
+            },
+            {
+                "from": "Ensure Validity",
+                "to": "Python"
+            },
+            {
+                "from": "Python",
+                "to": "Check target spec"
+            },
+            {
+                "from": "Check target spec",
+                "to": "Trains Data (Target)"
+            },
+            {
+                "from": "ErrorCollector",
+                "to": "Error Log"
+            }
+        ],
+        "comments": [],
+        "postActions": [],
+        "properties": {},
+        "processTimingEnabled": false,
+        "stageLoggingEnabled": false,
+        "stages": [
+            {
+                "name": "Trains Data (Source)",
+                "plugin": {
+                    "name": "File",
+                    "type": "batchsource",
+                    "label": "Trains Data (Source)",
+                    "artifact": {
+                        "name": "core-plugins",
+                        "version": "2.12.3",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "referenceName": "Trains_Source",
+                        "path": "",
+                        "format": "csv",
+                        "sampleSize": "1000",
+                        "filenameOnly": "false",
+                        "recursive": "false",
+                        "ignoreNonExistingFolders": "false",
+                        "fileEncoding": "UTF-8",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}",
+                        "enableQuotedValues": "true",
+                        "skipHeader": "true"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Trains-Data-(Source)"
+            },
+            {
+                "name": "Ensure Columns",
+                "plugin": {
+                    "name": "AssertTransform",
+                    "type": "transform",
+                    "label": "Ensure Columns",
+                    "artifact": {
+                        "name": "easytest-plugin",
+                        "version": "0.1.0",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "expression": "input['Train_No'] != null &&\ninput['Distance'] != null",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}",
+                        "description": "Ensure that required columns are present."
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Trains Data (Source)",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Ensure-Columns"
+            },
+            {
+                "name": "Projection",
+                "plugin": {
+                    "name": "Projection",
+                    "type": "transform",
+                    "label": "Projection",
+                    "artifact": {
+                        "name": "core-plugins",
+                        "version": "2.12.3",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "convert": "Train_No:int,SEQ:int,Distance:int"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Ensure Columns",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"string\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"string\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"string\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Projection"
+            },
+            {
+                "name": "Fixture (Test)",
+                "plugin": {
+                    "name": "FixtureTransform",
+                    "type": "transform",
+                    "label": "Fixture (Test)",
+                    "artifact": {
+                        "name": "easytest-plugin",
+                        "version": "0.1.0",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "name": "fixture1",
+                        "control-dropdown": "Ensure Basic Validity:enabled",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Projection",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Fixture-(Test)"
+            },
+            {
+                "name": "Ensure Basic Validity",
+                "plugin": {
+                    "name": "AssertTransform",
+                    "type": "transform",
+                    "label": "Ensure Basic Validity",
+                    "artifact": {
+                        "name": "easytest-plugin",
+                        "version": "0.1.0",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}",
+                        "expression": "input['Distance'] != null &&\ninput['Distance'] >= 0 &&\ntoken['fixture1']['test'] == 100",
+                        "description": "Check if distance is non-negative."
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Fixture (Test)",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Ensure-Basic-Validity"
+            },
+            {
+                "name": "Wrangler",
+                "plugin": {
+                    "name": "Wrangler",
+                    "type": "transform",
+                    "label": "Wrangler",
+                    "artifact": {
+                        "name": "wrangler-transform",
+                        "version": "4.10.1",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "field": "*",
+                        "expressionLanguage": "jexl",
+                        "precondition": "false",
+                        "on-error": "send-to-error-port",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Ensure Basic Validity",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Wrangler"
+            },
+            {
+                "name": "Ensure Validity",
+                "plugin": {
+                    "name": "AssertTransform",
+                    "type": "transform",
+                    "label": "Ensure Validity",
+                    "artifact": {
+                        "name": "easytest-plugin",
+                        "version": "0.1.0",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "expression": "true",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}",
+                        "description": "Basic"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Wrangler",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Ensure-Validity"
+            },
+            {
+                "name": "ErrorCollector",
+                "plugin": {
+                    "name": "ErrorCollector",
+                    "type": "errortransform",
+                    "label": "ErrorCollector",
+                    "artifact": {
+                        "name": "core-plugins",
+                        "version": "2.12.3",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "messageField": "msg",
+                        "codeField": "code",
+                        "stageField": "node"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Wrangler",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "ErrorCollector"
+            },
+            {
+                "name": "Python",
+                "plugin": {
+                    "name": "PythonEvaluator",
+                    "type": "transform",
+                    "label": "Python",
+                    "artifact": {
+                        "name": "python-transform",
+                        "version": "2.3.1",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "script": "def transform(record, emitter, context):\n    \"\"\"Transforms the provided input record into zero or more output records (as dictionaries) or errors (as an error dictionary).\n\n    Input records are available as a dictionary.\n\n    Args:\n        record (dict): The input record as a dictionary. e.g. to access a field called 'total' from the input record, use record['total'].\n        emitter (Emitter): an object that can be used to emit zero or more records (using the emitter.emit() method) or errors (using the emitter.emitError() method).\n        context (Context): an object that provides access to:\n                           1. CDAP Metrics - context.getMetrics().count('output', 1);\n                           2. CDAP Logs - context.getLogger().debug('Received a record');\n                           3. Lookups - context.getLookup('blacklist').lookup(input.id); or\n                           4. Runtime Arguments - context.getArguments.get('priceThreshold')\n\n    \"\"\"\n    \n    cost_per_unit_dist = 10\n    record['Cost'] = cost_per_unit_dist * record['Distance']\n    \n    emitter.emit(record)\n",
+                        "executionMode": "Interpreted",
+                        "pythonBinary": "python",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Ensure Validity",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody.typetypetypeprojected\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"}]}"
+                    }
+                ],
+                "id": "Python"
+            },
+            {
+                "name": "Check target spec",
+                "plugin": {
+                    "name": "AssertTransform",
+                    "type": "transform",
+                    "label": "Check target spec",
+                    "artifact": {
+                        "name": "easytest-plugin",
+                        "version": "0.1.0",
+                        "scope": "USER"
+                    },
+                    "properties": {
+                        "expression": "input['Cost'] != null &&\ninput['Cost'] >= 0 &&\n(input['Cost'] > 0) == (input['Distance'] > 0)",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}",
+                        "description": "Some description"
+                    }
+                },
+                "outputSchema": [
+                    {
+                        "name": "etlSchemaBody",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                ],
+                "inputSchema": [
+                    {
+                        "name": "Python",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                ],
+                "id": "Check-target-spec"
+            },
+            {
+                "name": "Trains Data (Target)",
+                "plugin": {
+                    "name": "File",
+                    "type": "batchsink",
+                    "label": "Trains Data (Target)",
+                    "artifact": {
+                        "name": "core-plugins",
+                        "version": "2.12.3",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "referenceName": "Trains_Clean",
+                        "path": "",
+                        "suffix": "yyyy-MM-dd-HH-mm",
+                        "format": "csv",
+                        "writeHeader": "false",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                },
+                "outputSchema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}",
+                "inputSchema": [
+                    {
+                        "name": "Check target spec",
+                        "schema": "{\"type\":\"record\",\"name\":\"etlSchemaBody\",\"fields\":[{\"name\":\"Train_No\",\"type\":\"int\"},{\"name\":\"Train_Name\",\"type\":\"string\"},{\"name\":\"SEQ\",\"type\":\"int\"},{\"name\":\"Station_Code\",\"type\":\"string\"},{\"name\":\"Station_Name\",\"type\":\"string\"},{\"name\":\"Arrival_time\",\"type\":\"string\"},{\"name\":\"Departure_Time\",\"type\":\"string\"},{\"name\":\"Distance\",\"type\":\"int\"},{\"name\":\"Source_Station\",\"type\":\"string\"},{\"name\":\"Source_Station_Name\",\"type\":\"string\"},{\"name\":\"Destination_Station\",\"type\":\"string\"},{\"name\":\"Destination_Station_Name\",\"type\":\"string\"},{\"name\":\"Cost\",\"type\":\"int\"}]}"
+                    }
+                ],
+                "id": "Trains-Data-(Target)"
+            },
+            {
+                "name": "Error Log",
+                "plugin": {
+                    "name": "File",
+                    "type": "batchsink",
+                    "label": "Error Log",
+                    "artifact": {
+                        "name": "core-plugins",
+                        "version": "2.12.3",
+                        "scope": "SYSTEM"
+                    },
+                    "properties": {
+                        "referenceName": "Trains_Error",
+                        "path": "",
+                        "suffix": "yyyy-MM-dd-HH-mm",
+                        "format": "csv",
+                        "writeHeader": "false"
+                    }
+                },
+                "inputSchema": [
+                    {
+                        "name": "ErrorCollector",
+                        "schema": ""
+                    }
+                ],
+                "id": "Error-Log"
+            }
+        ],
+        "schedule": "0 1 */1 * *",
+        "engine": "spark",
+        "numOfRecordsPreview": 100,
+        "rangeRecordsPreview": {
+            "min": 1,
+            "max": "5000"
+        },
+        "maxConcurrentRuns": 1
+    },
+    "id": "f662818a-48a4-41ad-9dd0-8d5ef4dfe9f9",
+    "createdTimeMillis": 1732635757202,
+    "updatedTimeMillis": 1732635757202,
+    "configHash": 1322999489,
+    "previousHash": "",
+    "revision": 0
+}
