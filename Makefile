@@ -5,7 +5,7 @@ all: build install
 	@echo "Done"
 
 build:
-	${MVN_HOME}/bin/mvn clean package -DskipTests -U
+	mvn clean package -DskipTests -U
 
 install:
 	${CDAP_HOME}/bin/cdap cli delete artifact ${PLUGIN} ${VERSION}
