@@ -110,14 +110,14 @@ public class MutateTransformPlugin extends Transform<StructuredRecord, Structure
    */
   @Override
   public void transform(StructuredRecord input, Emitter<StructuredRecord> emitter) throws Exception {
-    if(sampleCount == config.sampleSize) {
+    if (sampleCount == config.sampleSize) {
       emitter.emit(input);
       return;
     }
 
     List<Schema.Field> fields = inputSchema.getFields();
     StructuredRecord.Builder builder = StructuredRecord.builder(inputSchema);
-    
+
     for (Schema.Field field : fields) {
       String name = field.getName();
 
@@ -144,18 +144,18 @@ public class MutateTransformPlugin extends Transform<StructuredRecord, Structure
     switch (type) {
       case Constants.MUTATION_NULL:
         return null;
+      case Constants.MUTATION_SPECIFIC:
+        return specific;
       case Constants.MUTATION_ZERO:
         return 0;
       case Constants.MUTATION_NEGATIVE:
-        return -1 * ((Double) ground);
+        return Operators.negative(ground);
       case Constants.MUTATION_ABSOLUTE:
-        return Math.abs((Double) ground);
-      case Constants.MUTATION_SPECIFIC:
-        return specific;
+        return Operators.absolute(ground);
       case Constants.MUTATION_LARGE_NEGATIVE:
-        return Double.NEGATIVE_INFINITY;
+        return Operators.negativeMax(ground);
       case Constants.MUTATION_LARGE_POSITIVE:
-        return Double.POSITIVE_INFINITY;
+        return Operators.positiveMax(ground);
       default:
         return null;
     }
